@@ -90,20 +90,20 @@ app.post('/students', (req, res) => {
 app.post('/register', async function (req, res) {
   try {
     let encodedUser;
-    console.log('req.body', req.body)
+    // console.log('req.body', req.body)
     // Hashes the password and inserts the info into the `user` table
     await bcrypt.hash(req.body.password, 10).then(async hash => {
       try {
+        // console.log('Hashed Password: ', hash);
         const [user] = await req.db.query(`
-          INSERT INTO user (user_name, password)
-          VALUES (:username, :password);
+        INSERT INTO user (user_name, password)
+        VALUES (:username, :password);
         `, {
-          // email: req.body.email,
-          // fname: req.body.fname,
-          // lname: req.body.lname,
           username: req.body.username,
           password: hash
         });
+
+        // console.log('User: ', user);
 
         encodedUser = jwt.sign(
           {
@@ -112,6 +112,7 @@ app.post('/register', async function (req, res) {
           },
           process.env.JWT_KEY
         );
+        // console.log(encodedUser);
       } catch (error) {
         console.log('error', error);
       }
@@ -191,6 +192,7 @@ app.use(async function verifyJwt(req, res, next) {
   await next();
 });
 
+// GET request to http://localhost:8080/last-messages ends here
 app.get('/last-messages', async (req, res) => {
   try {
 
